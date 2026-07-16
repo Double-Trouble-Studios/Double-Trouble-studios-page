@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOUBLE TROUBLE STUDIOS // Official Website</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- NAV BAR -->
+    <nav class="ubi-nav">
+        <div class="ubi-nav-container">
+            <a href="#" class="ubi-logo">DOUBLE<span>TROUBLE</span> <small>STUDIOS</small></a>
+            <ul class="ubi-menu">
+                <li><a href="#games" class="ubi-link active">GAMES</a></li>
+                <li><a href="#news" class="ubi-link">NEWS</a></li>
+                <li><a href="#contact" class="ubi-link">CONTACT</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="ubi-hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-ubi-content">
+            <span class="hero-tag">WELCOME TO THE NEXT GEN</span>
+            <h1 class="hero-title-large">DOUBLE_TROUBLE</h1>
+            <p class="hero-desc-large">Prepare for twice the chaos. We build raw, high-octane tactical games for those who dare to challenge the system.</p>
+            <div class="hero-actions">
+                <a href="#contact" class="btn-ubi-primary">JOIN ALPHA</a>
+                <a href="#games" class="btn-ubi-secondary">VIEW DISPATCH</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- GAMES GRID SECTION -->
+    <main class="ubi-main">
+        <section id="games" class="ubi-section">
+            <div class="ubi-section-header">
+                <h2>FEATURED GAMES</h2>
+            </div>
+            
+            <div class="ubi-grid">
+                <div class="ubi-card">
+                    <div class="ubi-card-media" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80');">
+                        <div class="ubi-card-badge">LIVE NOW</div>
+                    </div>
+                    <div class="ubi-card-info">
+                        <h3>PROJECT: REDLINE</h3>
+                        <p>Open-world racing set in a dystopian neon metropolis.</p>
+                    </div>
+                </div>
+
+                <div class="ubi-card">
+                    <div class="ubi-card-media" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80');">
+                        <div class="ubi-card-badge red">COMING SOON</div>
+                    </div>
+                    <div class="ubi-card-info">
+                        <h3>SHADOW RECKONING</h3>
+                        <p>Tactical stealth operations inside the dark web.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION (WEB3FORMS) -->
+        <section id="contact" class="ubi-section ubi-newsletter">
+            <div class="newsletter-box">
+                <h2>JOIN THE NETWORK</h2>
+                <p>Subscribe to receive critical updates, patch notes, and exclusive intel briefings.</p>
+                
+                <form action="https://api.web3forms.com/submit" method="POST" class="ubi-form">
+                    <input type="hidden" name="access_key" value="ec2fb03e-6044-4b76-9f40-532455f37fd9">
+                    <input type="hidden" name="redirect" value="https://doubletrouble.github.io/">
+                    
+                    <input type="email" name="email" placeholder="ENTER YOUR EMAIL" required>
+                    <button type="submit" class="btn-ubi-primary">SUBSCRIBE</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="ubi-footer">
+        <div class="ubi-footer-container">
+            <div class="footer-logo">DOUBLE<span>TROUBLE</span> <small>STUDIOS</small></div>
+            <p class="copy">&copy; 2026 Double Trouble Studios. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- SECRET EDITOR -->
+    <div id="secret-editor" class="editor-panel">
+        <div class="editor-header">
+            <h3>DT_STUDIOS // DEV_CONSOLE</h3>
+            <button id="close-editor">&times;</button>
+        </div>
+        <div class="editor-body">
+            <div class="input-group">
+                <label>HERO TITLE</label>
+                <input type="text" id="edit-title" value="DOUBLE_TROUBLE">
+            </div>
+            <div class="input-group">
+                <label>HERO DESCRIPTION</label>
+                <textarea id="edit-desc" rows="3">Prepare for twice the chaos. We build raw, high-octane tactical games for those who dare to challenge the system.</textarea>
+            </div>
+            <button id="apply-changes" class="btn-ubi-primary" style="width: 100%; margin-top: 1rem;">APPLY SYSTEM CHANGES</button>
+        </div>
+    </div>
+
+    <script>
+        const editor = document.getElementById('secret-editor');
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e') {
+                e.preventDefault();
+                editor.classList.toggle('active');
+            }
+        });
+        document.getElementById('close-editor').addEventListener('click', () => editor.classList.remove('active'));
+        document.getElementById('apply-changes').addEventListener('click', () => {
+            document.querySelector('.hero-title-large').innerText = document.getElementById('edit-title').value;
+            document.querySelector('.hero-desc-large').innerText = document.getElementById('edit-desc').value;
+            editor.classList.remove('active');
+        });
+    </script>
+</body>
+</html>
