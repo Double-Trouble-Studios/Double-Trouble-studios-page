@@ -23,7 +23,6 @@
         .btn-ubi-primary { background-color: var(--dt-accent); color: white; padding: 12px 35px; border: none; cursor: pointer; text-transform: uppercase; margin: 5px; }
         .editor-panel { display: none; position: fixed; bottom: 20px; right: 20px; background: var(--dt-dark-grey); padding: 20px; border: 1px solid var(--dt-accent); z-index: 2000; max-height: 80vh; overflow-y: auto; }
         .editor-panel.active { display: block; }
-
         .mobile-hint { display: none; text-align: center; color: var(--dt-light-grey); font-size: 0.9rem; margin-top: -30px; margin-bottom: 20px; }
 
         @media screen and (max-width: 768px) {
@@ -51,6 +50,7 @@
 
         <section id="subscribe" style="text-align: center; margin-top: 80px; padding: 40px; background: rgba(255,255,255,0.03); border-top: 1px solid var(--dt-medium-grey);">
             <h2>STAY UPDATED</h2>
+            <p style="color: var(--dt-light-grey);">Subscribe for our upcoming game releases.</p>
             <input type="email" id="sub-email" placeholder="ENTER YOUR EMAIL" style="padding: 12px; width: 250px; background: var(--dt-dark-grey); border: 1px solid var(--dt-medium-grey); color: white;">
             <button id="sub-btn" class="btn-ubi-primary">SUBSCRIBE</button>
         </section>
@@ -104,6 +104,14 @@
                 `).join('');
             }
         }
+
+        document.getElementById('sub-btn').addEventListener('click', async () => {
+            const email = document.getElementById('sub-email').value;
+            if(!email) { alert("Please enter an email"); return; }
+            const { error } = await db.from('subscribers').insert([{ email }]);
+            if (error) { console.error("Supabase Error:", error); alert("Error: " + error.message); }
+            else { alert("Thank you for subscribing!"); document.getElementById('sub-email').value = ''; }
+        });
 
         document.getElementById('update-hero').addEventListener('click', async () => {
             const title = document.getElementById('hero-title-in').value;
