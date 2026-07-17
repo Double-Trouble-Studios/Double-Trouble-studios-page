@@ -9,45 +9,28 @@
     <style>
         :root { --dt-black: #050507; --dt-dark-grey: #16161c; --dt-medium-grey: #2c2c38; --dt-white: #ffffff; --dt-accent: #e63946; --dt-light-grey: #888899; --font-heading: 'Rajdhani', sans-serif; --font-body: 'Inter', sans-serif; }
         body.ubi-dark-mode { background-color: var(--dt-black); color: var(--dt-white); font-family: var(--font-body); margin: 0; padding-top: 80px; }
-        
         .ubi-nav { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(5, 5, 7, 0.95); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid var(--dt-medium-grey); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
         .ubi-logo { font-family: var(--font-heading); font-weight: 900; font-size: 1.5rem; text-decoration: none; color: white; }
         .ubi-logo span { color: var(--dt-accent); }
         
-        /* Hero-tyylit */
         .hero { text-align: center; padding: 100px 20px; background: linear-gradient(to bottom, #16161c, #050507); }
         .hero h1 { font-family: var(--font-heading); font-size: 4rem; margin: 0; }
         
-        /* Grid-asetukset */
         .ubi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px; padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
-        
         .ubi-card { background-color: var(--dt-dark-grey); border: 1px solid var(--dt-medium-grey); transition: 0.4s; flex-shrink: 0; }
-        .ubi-card:hover { transform: translateY(-5px); border-color: var(--dt-accent); }
         .ubi-card-image { width: 100%; height: 200px; object-fit: cover; }
         .ubi-card-info { padding: 25px; }
-        .btn-ubi-primary { background-color: var(--dt-accent); color: white; padding: 12px 35px; border: none; cursor: pointer; text-transform: uppercase; }
-        .editor-panel { display: none; position: fixed; bottom: 20px; right: 20px; background: var(--dt-dark-grey); padding: 20px; border: 1px solid var(--dt-accent); z-index: 2000; }
+        .btn-ubi-primary { background-color: var(--dt-accent); color: white; padding: 12px 35px; border: none; cursor: pointer; text-transform: uppercase; margin: 5px; }
+        .editor-panel { display: none; position: fixed; bottom: 20px; right: 20px; background: var(--dt-dark-grey); padding: 20px; border: 1px solid var(--dt-accent); z-index: 2000; max-height: 80vh; overflow-y: auto; }
         .editor-panel.active { display: block; }
 
-        /* Mobiilioptimointi */
         .mobile-hint { display: none; text-align: center; color: var(--dt-light-grey); font-size: 0.9rem; margin-top: -30px; margin-bottom: 20px; }
 
         @media screen and (max-width: 768px) {
             .hero h1 { font-size: 2.5rem; }
-            .ubi-grid { 
-                display: flex; 
-                flex-wrap: nowrap; 
-                overflow-x: auto; 
-                padding: 20px; 
-                gap: 20px; 
-                scroll-snap-type: x mandatory; 
-                max-width: 100%;
-            }
+            .ubi-grid { display: flex; flex-wrap: nowrap; overflow-x: auto; padding: 20px; gap: 20px; scroll-snap-type: x mandatory; max-width: 100%; }
             .ubi-card { min-width: 80%; scroll-snap-align: center; }
             .mobile-hint { display: block; }
-            #sub-email { width: 80% !important; margin-bottom: 10px; }
-            #sub-btn { width: 80% !important; }
-            .editor-panel { width: 90%; left: 5%; right: 5%; }
         }
     </style>
 </head>
@@ -57,25 +40,22 @@
         <a href="#" class="ubi-logo">DOUBLE<span>TROUBLE</span></a>
     </nav>
 
-    <header class="hero">
-        <h1>WELCOME TO THE STUDIO</h1>
-        <p style="color: var(--dt-light-grey); font-size: 1.2rem; max-width: 600px; margin: 20px auto;">We create immersive experiences and bold games. Explore our latest projects below.</p>
+    <header id="hero-section" class="hero">
+        <h1 id="hero-title">LOADING...</h1>
+        <p id="hero-desc" style="color: var(--dt-light-grey); font-size: 1.2rem; max-width: 600px; margin: 20px auto;"></p>
     </header>
 
     <main>
         <section id="game-grid" class="ubi-grid"></section>
         <p class="mobile-hint">Slide right to see other games &rarr;</p>
 
-        <!-- Tilauslomake -->
         <section id="subscribe" style="text-align: center; margin-top: 80px; padding: 40px; background: rgba(255,255,255,0.03); border-top: 1px solid var(--dt-medium-grey);">
             <h2>STAY UPDATED</h2>
-            <p style="color: var(--dt-light-grey);">Subscribe for our upcoming game releases.</p>
             <input type="email" id="sub-email" placeholder="ENTER YOUR EMAIL" style="padding: 12px; width: 250px; background: var(--dt-dark-grey); border: 1px solid var(--dt-medium-grey); color: white;">
             <button id="sub-btn" class="btn-ubi-primary">SUBSCRIBE</button>
         </section>
     </main>
 
-    <!-- Admin Paneeli -->
     <div id="secret-editor" class="editor-panel">
         <div class="editor-header"><h3>DT_CORE // ADMIN</h3><button id="close-editor">&times;</button></div>
         <div id="login-screen">
@@ -83,35 +63,47 @@
             <button id="login-btn" class="btn-ubi-primary">ACCESS</button>
         </div>
         <div id="editor-controls" style="display: none;">
+            <h4>UPDATE HERO</h4>
+            <input type="text" id="hero-title-in" placeholder="New Hero Title">
+            <input type="text" id="hero-desc-in" placeholder="New Hero Desc">
+            <button id="update-hero" class="btn-ubi-primary">SAVE HERO</button>
+            <hr>
+            <h4>ADD GAME</h4>
             <input type="text" id="new-game-title" placeholder="Name">
             <input type="text" id="new-game-desc" placeholder="Description">
             <input type="text" id="new-game-img" placeholder="Image URL">
-            <button id="add-game" class="btn-ubi-primary">SAVE</button>
+            <button id="add-game" class="btn-ubi-primary">SAVE GAME</button>
         </div>
     </div>
 
     <script>
         const db = supabase.createClient("https://elifhcqurdemwsbgrxnu.supabase.co", "sb_publishable_tzGcpzH-kWK2JfS5EbMuIA_E_Dih4Hb");
-        const grid = document.getElementById('game-grid');
-        const editor = document.getElementById('secret-editor');
+        
+        async function fetchHero() {
+            const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
+            if (data) {
+                document.getElementById('hero-title').innerText = data.title;
+                document.getElementById('hero-desc').innerText = data.description;
+            }
+        }
 
         async function fetchGames() {
             const { data } = await db.from('games').select('*');
             if (data) {
-                grid.innerHTML = data.map(game => `
+                document.getElementById('game-grid').innerHTML = data.map(game => `
                     <div class="ubi-card">
-                        <img src="${game.image_url || 'https://via.placeholder.com/400x200'}" class="ubi-card-image" onerror="this.src='https://via.placeholder.com/400x200'">
+                        <img src="${game.image_url || 'https://via.placeholder.com/400x200'}" class="ubi-card-image">
                         <div class="ubi-card-info"><h3>${game.title}</h3><p>${game.description}</p></div>
                     </div>
                 `).join('');
             }
         }
 
-        document.getElementById('sub-btn').addEventListener('click', async () => {
-            const email = document.getElementById('sub-email').value;
-            const { error } = await db.from('subscribers').insert([{ email }]);
-            if (error) alert("Error: " + error.message);
-            else { alert("Thank you!"); document.getElementById('sub-email').value = ''; }
+        document.getElementById('update-hero').addEventListener('click', async () => {
+            const title = document.getElementById('hero-title-in').value;
+            const desc = document.getElementById('hero-desc-in').value;
+            await db.from('hero_content').update({ title, description: desc }).eq('id', 1);
+            fetchHero();
         });
 
         document.getElementById('login-btn').addEventListener('click', () => {
@@ -129,8 +121,10 @@
             fetchGames();
         });
 
-        document.addEventListener('keydown', (e) => { if (e.ctrlKey && e.shiftKey && e.key === 'E') editor.classList.toggle('active'); });
-        document.getElementById('close-editor').addEventListener('click', () => editor.classList.remove('active'));
+        document.addEventListener('keydown', (e) => { if (e.ctrlKey && e.shiftKey && e.key === 'E') document.getElementById('secret-editor').classList.toggle('active'); });
+        document.getElementById('close-editor').addEventListener('click', () => document.getElementById('secret-editor').classList.remove('active'));
+
+        fetchHero();
         fetchGames();
     </script>
 </body>
