@@ -13,15 +13,16 @@
         .ubi-logo { font-family: var(--font-heading); font-weight: 900; font-size: 1.5rem; text-decoration: none; color: white; }
         .ubi-logo span { color: var(--dt-accent); }
         
-        .hero { text-align: center; padding: 100px 20px; background-color: #16161c; }
+        /* Hero-tyylit korjattu näkyvyyden varmistamiseksi */
+        .hero { text-align: center; padding: 100px 20px; background-color: #16161c; color: white; }
         .hero h1 { font-family: var(--font-heading); font-size: 4rem; margin: 0; }
-        .hero-cta { margin-top: 30px; }
+        .hero-cta { margin-top: 40px; display: block; padding-bottom: 20px; }
         
         .ubi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px; padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
         .ubi-card { background-color: var(--dt-dark-grey); border: 1px solid var(--dt-medium-grey); transition: 0.4s; flex-shrink: 0; }
         .ubi-card-image { width: 100%; height: 200px; object-fit: cover; }
         .ubi-card-info { padding: 25px; }
-        .btn-ubi-primary { background-color: var(--dt-accent); color: white; padding: 12px 35px; border: none; cursor: pointer; text-transform: uppercase; margin: 5px; }
+        .btn-ubi-primary { background-color: var(--dt-accent); color: white; padding: 12px 35px; border: none; cursor: pointer; text-transform: uppercase; margin: 5px; display: inline-block; text-decoration: none; }
         .editor-panel { display: none; position: fixed; bottom: 20px; right: 20px; background: var(--dt-dark-grey); padding: 20px; border: 1px solid var(--dt-accent); z-index: 2000; max-height: 80vh; overflow-y: auto; }
         .editor-panel.active { display: block; }
         .mobile-hint { display: none; text-align: center; color: var(--dt-light-grey); font-size: 0.9rem; margin-top: -30px; margin-bottom: 20px; }
@@ -43,9 +44,10 @@
     <header id="hero-section" class="hero">
         <h1 id="hero-title">LOADING...</h1>
         <p id="hero-desc" style="color: var(--dt-light-grey); font-size: 1.2rem; max-width: 600px; margin: 20px auto;"></p>
+        <!-- Tässä kohtaa CTA on varmasti näkyvissä -->
         <div class="hero-cta">
-            <p style="color: var(--dt-accent); font-weight: bold; margin-bottom: 10px;">JOIN ALPHA</p>
-            <a href="#subscribe" class="btn-ubi-primary">SIGN UP NOW</a>
+            <p style="color: var(--dt-accent); font-weight: bold; margin-bottom: 10px; font-size: 1.1rem; text-transform: uppercase;">Join Alpha</p>
+            <a href="#subscribe" class="btn-ubi-primary">Sign up now</a>
         </div>
     </header>
 
