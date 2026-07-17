@@ -4,104 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOUBLE TROUBLE STUDIOS // Game Portfolio</title>
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --dt-black: #050507; --dt-dark-grey: #16161c; --dt-medium-grey: #2c2c38; --dt-white: #ffffff; --dt-accent: #e63946; --dt-light-grey: #888899; --font-heading: 'Rajdhani', sans-serif; --font-body: 'Inter', sans-serif; }
+        body.ubi-dark-mode { background-color: var(--dt-black); color: var(--dt-white); font-family: var(--font-body); margin: 0; padding-top: 80px; }
+        .ubi-nav { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(5, 5, 7, 0.95); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid var(--dt-medium-grey); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+        .ubi-logo { font-family: var(--font-heading); font-weight: 900; font-size: 1.5rem; text-decoration: none; color: white; }
+        .ubi-logo span { color: var(--dt-accent); }
+        .ubi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px; padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
+        .ubi-card { background-color: var(--dt-dark-grey); border: 1px solid var(--dt-medium-grey); transition: 0.4s; }
+        .ubi-card:hover { transform: translateY(-5px); border-color: var(--dt-accent); }
+        .ubi-card-image { width: 100%; height: 200px; object-fit: cover; }
+        .ubi-card-info { padding: 25px; }
+        .btn-ubi-primary { background-color: var(--dt-accent); color: white; padding: 12px 35px; border: none; cursor: pointer; text-transform: uppercase; }
+        .editor-panel { display: none; position: fixed; bottom: 20px; right: 20px; background: var(--dt-dark-grey); padding: 20px; border: 1px solid var(--dt-accent); z-index: 2000; }
+        .editor-panel.active { display: block; }
+    </style>
 </head>
 <body class="ubi-dark-mode">
 
     <nav class="ubi-nav">
-        <div class="ubi-nav-container">
-            <a href="#" class="ubi-logo">DOUBLE<span>TROUBLE</span> <small>STUDIOS</small></a>
-            <ul class="ubi-menu">
-                <li><a href="#games" class="ubi-link active">GAMES</a></li>
-            </ul>
-        </div>
+        <a href="#" class="ubi-logo">DOUBLE<span>TROUBLE</span></a>
     </nav>
 
-    <header class="ubi-hero">
-        <div class="hero-content">
-            <h1>DEVELOPING <span>NEXT-GEN</span> TACTICS</h1>
-            <p>EXPLORE OUR PORTFOLIO OF IMMERSIVE STRATEGY GAMES.</p>
-            <a href="#games" class="btn-ubi-primary">VIEW GAMES</a>
-        </div>
-        <div class="hero-overlay"></div>
-    </header>
+    <main>
+        <section id="game-grid" class="ubi-grid"></section>
 
-    <main class="ubi-main">
-        <section id="games" class="ubi-section">
-            <div id="game-grid" class="ubi-grid"></div>
+        <!-- Tilauslomake -->
+        <section id="subscribe" style="text-align: center; margin-top: 80px; padding: 40px; background: rgba(255,255,255,0.03); border-top: 1px solid var(--dt-medium-grey);">
+            <h2>STAY UPDATED</h2>
+            <p style="color: var(--dt-light-grey);">Subscribe for our upcoming game releases.</p>
+            <input type="email" id="sub-email" placeholder="ENTER YOUR EMAIL" style="padding: 12px; width: 250px; background: var(--dt-dark-grey); border: 1px solid var(--dt-medium-grey); color: white;">
+            <button id="sub-btn" class="btn-ubi-primary">SUBSCRIBE</button>
         </section>
     </main>
 
-    <!-- ADMIN PANEL -->
+    <!-- Admin Paneeli -->
     <div id="secret-editor" class="editor-panel">
-        <div class="editor-header"><h3>DT_CORE // ADMIN_PANEL</h3><button id="close-editor">&times;</button></div>
+        <div class="editor-header"><h3>DT_CORE // ADMIN</h3><button id="close-editor">&times;</button></div>
         <div id="login-screen">
             <input type="password" id="admin-pass" placeholder="KEY">
             <button id="login-btn" class="btn-ubi-primary">ACCESS</button>
         </div>
         <div id="editor-controls" style="display: none;">
-            <input type="text" id="new-game-title" placeholder="Game Name">
-            <input type="text" id="new-game-desc" placeholder="Game Description">
-            <input type="text" id="new-game-img" placeholder="Image URL from Storage">
-            <button id="add-game" class="btn-ubi-primary">ADD GAME TO DATABASE</button>
+            <input type="text" id="new-game-title" placeholder="Name">
+            <input type="text" id="new-game-desc" placeholder="Description">
+            <input type="text" id="new-game-img" placeholder="Image URL">
+            <button id="add-game" class="btn-ubi-primary">SAVE</button>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_tzGcpzH-kWK2JfS5EbMuIA_E_Dih4Hb";
-        const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+        const db = supabase.createClient("https://elifhcqurdemwsbgrxnu.supabase.co", "sb_publishable_tzGcpzH-kWK2JfS5EbMuIA_E_Dih4Hb");
         const grid = document.getElementById('game-grid');
         const editor = document.getElementById('secret-editor');
-        const ADMIN_PASS = "DT-77-CYBER-SECURE-2026!";
 
         async function fetchGames() {
-            const { data, error } = await db.from('games').select('*');
-            if (error) { console.error(error.message); return; }
+            const { data } = await db.from('games').select('*');
             if (data) {
                 grid.innerHTML = data.map(game => `
                     <div class="ubi-card">
-                        <div class="ubi-card-image-container">
-                            <img src="${game.image_url || 'https://via.placeholder.com/400x200'}" 
-                                 alt="${game.title}" class="ubi-card-image"
-                                 onerror="this.src='https://via.placeholder.com/400x200?text=IMAGE+ERROR'">
-                            <div class="ubi-card-overlay"></div>
-                        </div>
-                        <div class="ubi-card-info">
-                            <h3>${game.title}</h3>
-                            <p>${game.description || 'New tactical game.'}</p>
-                        </div>
+                        <img src="${game.image_url || 'https://via.placeholder.com/400x200'}" class="ubi-card-image" onerror="this.src='https://via.placeholder.com/400x200'">
+                        <div class="ubi-card-info"><h3>${game.title}</h3><p>${game.description}</p></div>
                     </div>
                 `).join('');
             }
         }
 
+        // Tilauslogiikka
+        document.getElementById('sub-btn').addEventListener('click', async () => {
+            const email = document.getElementById('sub-email').value;
+            const { error } = await db.from('subscribers').insert([{ email }]);
+            if (error) alert("Error: " + error.message);
+            else { alert("Thank you!"); document.getElementById('sub-email').value = ''; }
+        });
+
+        // Admin logiikka
         document.getElementById('login-btn').addEventListener('click', () => {
-            if(document.getElementById('admin-pass').value === ADMIN_PASS) {
+            if(document.getElementById('admin-pass').value === "DT-77-CYBER-SECURE-2026!") {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('editor-controls').style.display = 'block';
-            } else { alert("ACCESS DENIED"); }
+            } else alert("ACCESS DENIED");
         });
 
         document.getElementById('add-game').addEventListener('click', async () => {
             const title = document.getElementById('new-game-title').value;
             const desc = document.getElementById('new-game-desc').value;
             const img = document.getElementById('new-game-img').value;
-            if(!title) return;
-            const { error } = await db.from('games').insert([{ title, description: desc, image_url: img }]);
-            if (error) alert("Virhe: " + error.message);
-            else { fetchGames(); document.getElementById('new-game-title').value = ''; document.getElementById('new-game-desc').value = ''; document.getElementById('new-game-img').value = ''; }
+            await db.from('games').insert([{ title, description: desc, image_url: img }]);
+            fetchGames();
         });
 
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e') editor.classList.toggle('active');
-        });
-
+        document.addEventListener('keydown', (e) => { if (e.ctrlKey && e.shiftKey && e.key === 'E') editor.classList.toggle('active'); });
         document.getElementById('close-editor').addEventListener('click', () => editor.classList.remove('active'));
-
         fetchGames();
     </script>
 </body>
