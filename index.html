@@ -20,6 +20,14 @@
         .btn-ubi-primary { background-color: var(--dt-accent); color: white; padding: 12px 35px; border: none; cursor: pointer; text-transform: uppercase; }
         .editor-panel { display: none; position: fixed; bottom: 20px; right: 20px; background: var(--dt-dark-grey); padding: 20px; border: 1px solid var(--dt-accent); z-index: 2000; }
         .editor-panel.active { display: block; }
+
+        /* Mobiilioptimointi */
+        @media screen and (max-width: 768px) {
+            .ubi-grid { grid-template-columns: 1fr; padding: 20px; }
+            #sub-email { width: 90% !important; margin-bottom: 10px; }
+            #sub-btn { width: 90% !important; }
+            .editor-panel { width: 90%; left: 5%; right: 5%; }
+        }
     </style>
 </head>
 <body class="ubi-dark-mode">
@@ -72,7 +80,6 @@
             }
         }
 
-        // Tilauslogiikka
         document.getElementById('sub-btn').addEventListener('click', async () => {
             const email = document.getElementById('sub-email').value;
             const { error } = await db.from('subscribers').insert([{ email }]);
@@ -80,7 +87,6 @@
             else { alert("Thank you!"); document.getElementById('sub-email').value = ''; }
         });
 
-        // Admin logiikka
         document.getElementById('login-btn').addEventListener('click', () => {
             if(document.getElementById('admin-pass').value === "DT-77-CYBER-SECURE-2026!") {
                 document.getElementById('login-screen').style.display = 'none';
