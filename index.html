@@ -130,10 +130,17 @@
 
         document.getElementById('sub-btn').addEventListener('click', async () => {
             const email = document.getElementById('sub-email').value;
-            if(!email) { alert("Please enter an email"); return; }
-            const { error } = await db.from('subscribers').insert([{ email }]);
-            if (error) { alert("Error: " + error.message); }
-            else { alert("Thank you for subscribing!"); document.getElementById('sub-email').value = ''; }
+            if(!email || !email.includes('@')) { alert("Please enter a valid email"); return; }
+            
+            const { error } = await db.from('subscribers').insert([{ email: email, verified: false }]);
+            
+            if (error) { 
+                console.error("Error:", error); 
+                alert("Something went wrong. Please try again."); 
+            } else { 
+                alert("Check your email for verification! We've sent a link to activate your subscription.");
+                document.getElementById('sub-email').value = ''; 
+            }
         });
 
         document.getElementById('login-btn').addEventListener('click', async () => {
