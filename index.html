@@ -132,8 +132,20 @@
             const email = document.getElementById('sub-email').value;
             if(!email) { alert("Please enter an email"); return; }
             const { error } = await db.from('subscribers').insert([{ email }]);
-            if (error) { console.error("Supabase Error:", error); alert("Error: " + error.message); }
+            if (error) { alert("Error: " + error.message); }
             else { alert("Thank you for subscribing!"); document.getElementById('sub-email').value = ''; }
+        });
+
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const inputPass = document.getElementById('admin-pass').value;
+            const { data, error } = await db.from('admin_config').select('value').eq('key_name', 'admin_password').single();
+            
+            if (data && inputPass === data.value) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('editor-controls').style.display = 'block';
+            } else {
+                alert("ACCESS DENIED");
+            }
         });
 
         document.getElementById('update-hero').addEventListener('click', async () => {
@@ -142,13 +154,6 @@
             const bg_image_url = document.getElementById('hero-img-in').value;
             await db.from('hero_content').update({ title, description, bg_image_url }).eq('id', 1);
             fetchHero();
-        });
-
-        document.getElementById('login-btn').addEventListener('click', () => {
-            if(document.getElementById('admin-pass').value === "DT-77-CYBER-SECURE-2026!") {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('editor-controls').style.display = 'block';
-            } else alert("ACCESS DENIED");
         });
 
         document.getElementById('add-game').addEventListener('click', async () => {
