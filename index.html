@@ -13,7 +13,7 @@
         .ubi-logo { font-family: var(--font-heading); font-weight: 900; font-size: 1.5rem; text-decoration: none; color: white; }
         .ubi-logo span { color: var(--dt-accent); }
         
-        .hero { text-align: center; padding: 100px 20px; background: linear-gradient(to bottom, #16161c, #050507); }
+        .hero { text-align: center; padding: 120px 20px; background-color: #16161c; }
         .hero h1 { font-family: var(--font-heading); font-size: 4rem; margin: 0; }
         
         .ubi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px; padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
@@ -64,8 +64,9 @@
         </div>
         <div id="editor-controls" style="display: none;">
             <h4>UPDATE HERO</h4>
-            <input type="text" id="hero-title-in" placeholder="New Hero Title">
-            <input type="text" id="hero-desc-in" placeholder="New Hero Desc">
+            <input type="text" id="hero-title-in" placeholder="New Title">
+            <input type="text" id="hero-desc-in" placeholder="New Desc">
+            <input type="text" id="hero-img-in" placeholder="Image URL">
             <button id="update-hero" class="btn-ubi-primary">SAVE HERO</button>
             <hr>
             <h4>ADD GAME</h4>
@@ -84,6 +85,11 @@
             if (data) {
                 document.getElementById('hero-title').innerText = data.title;
                 document.getElementById('hero-desc').innerText = data.description;
+                if (data.bg_image_url) {
+                    document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(5, 5, 7, 0.8), rgba(5, 5, 7, 0.8)), url('${data.bg_image_url}')`;
+                    document.getElementById('hero-section').style.backgroundSize = "cover";
+                    document.getElementById('hero-section').style.backgroundPosition = "center";
+                }
             }
         }
 
@@ -92,7 +98,7 @@
             if (data) {
                 document.getElementById('game-grid').innerHTML = data.map(game => `
                     <div class="ubi-card">
-                        <img src="${game.image_url || 'https://via.placeholder.com/400x200'}" class="ubi-card-image">
+                        <img src="${game.image_url || 'https://via.placeholder.com/400x200'}" class="ubi-card-image" onerror="this.src='https://via.placeholder.com/400x200'">
                         <div class="ubi-card-info"><h3>${game.title}</h3><p>${game.description}</p></div>
                     </div>
                 `).join('');
@@ -101,8 +107,9 @@
 
         document.getElementById('update-hero').addEventListener('click', async () => {
             const title = document.getElementById('hero-title-in').value;
-            const desc = document.getElementById('hero-desc-in').value;
-            await db.from('hero_content').update({ title, description: desc }).eq('id', 1);
+            const description = document.getElementById('hero-desc-in').value;
+            const bg_image_url = document.getElementById('hero-img-in').value;
+            await db.from('hero_content').update({ title, description, bg_image_url }).eq('id', 1);
             fetchHero();
         });
 
