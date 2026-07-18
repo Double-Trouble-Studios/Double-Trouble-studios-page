@@ -101,7 +101,7 @@
     </div>
 
     <script>
-        const db = supabase.createClient("https://elifhcqurdemwsbgrxnu.supabase.co", "sb_publishable_tzGcpzH-kWK2JfS5EbMuIA_E_Dih4Hb");
+        const db = supabase.createClient("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q", "sb_publishable_tzGcpzH-kWK2JfS5EbMuIA_E_Dih4Hb");
         
         async function fetchHero() {
             const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
