@@ -101,8 +101,11 @@
     </div>
 
     <script>
-        // HUOM: Vaihda TÄHÄN_SE_PITKÄ_KEY oikeaan avaimeen!
-        const db = supabase.createClient("https://elifhcqurdemwsbgrxnu.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q");
+        // Supabase-yhteys päivitetty antamallasi avaimella
+        const db = supabase.createClient(
+            "https://elifhcqurdemwsbgrxnu.supabase.co", 
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q"
+        );
         
         async function fetchHero() {
             const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
@@ -133,12 +136,12 @@
             const email = document.getElementById('sub-email').value;
             if(!email || !email.includes('@')) { alert("Please enter a valid email"); return; }
             
-            // Varmista, että 'verified' on olemassa taulussa boolean-tyyppisenä
-            const { error } = await db.from('subscribers').insert([{ email: email, verified: false }]);
+            // Yksinkertaistettu lisäys (vain email, vältetään mahdollinen sarakevirhe)
+            const { error } = await db.from('subscribers').insert([{ email: email }]);
             
             if (error) { 
                 console.error("Error:", error); 
-                alert("Something went wrong. Please check your console."); 
+                alert("Virhe: " + error.message); 
             } else { 
                 alert("Subscription received!");
                 document.getElementById('sub-email').value = ''; 
