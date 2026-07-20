@@ -3,67 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOUBLE TROUBLE STUDIOS // Game Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>TESTISIVU</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="ubi-dark-mode">
-
-    <nav class="ubi-nav">
-        <a href="#" class="ubi-logo">DOUBLE<span>TROUBLE</span></a>
-    </nav>
-
-    <header id="hero-section" class="hero">
-        <h1 id="hero-title">LOADING...</h1>
-        <p id="hero-desc" style="color: var(--dt-light-grey); font-size: 1.2rem; max-width: 600px; margin: 20px auto;"></p>
-        
-        <div class="hero-cta">
-            <a href="#subscribe" class="btn-ubi-primary">JOIN ALPHA</a>
-            <p class="hero-subtext">GET EXCLUSIVE UPDATES & ALPHA ACCESS</p>
-        </div>
-    </header>
-
-    <main>
-        <section id="game-grid" class="ubi-grid"></section>
-        <p class="mobile-hint">Slide right to see other games &rarr;</p>
-
-        <section id="subscribe" style="text-align: center; margin-top: 80px; padding: 40px; background: rgba(255,255,255,0.03); border-top: 1px solid var(--dt-medium-grey);">
-            <h2>STAY UPDATED</h2>
-            <p style="color: var(--dt-light-grey);">Subscribe for our upcoming game releases.</p>
-            <input type="email" id="sub-email" placeholder="ENTER YOUR EMAIL" style="padding: 12px; width: 250px; background: var(--dt-dark-grey); border: 1px solid var(--dt-medium-grey); color: white;">
-            <button id="sub-btn" class="btn-ubi-primary">SUBSCRIBE</button>
-        </section>
-    </main>
-
+<body>
+    <h1>Testisivu</h1>
+    <p>Jos tämä näkyy, HTML toimii.</p>
+    
     <script>
+        // Käytetään vain perus-URL:ia, ei avainta vielä
         const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
-        const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q";
         
-        const db = supabase.createClient(SUPA_URL, SUPA_KEY);
-
-        document.getElementById('sub-btn').addEventListener('click', async () => {
-            const email = document.getElementById('sub-email').value;
-            if(!email) return;
-
-            console.log("Tallennetaan tietokantaan...");
-            await db.from('subscribers').insert([{ email: email }]);
-            
-            console.log("Kutsutaan Edge Functionia...");
-            // Käytetään Supabasen omaa invoke-metodia
-            const { data, error } = await db.functions.invoke('send-sub-email', {
-                body: { email: email },
-            });
-
-            if (error) {
-                console.error("Function virhe:", error);
-                alert("Virhe kutsussa: " + error.message);
-            } else {
-                console.log("Kutsu onnistui!", data);
-                alert("Subscribed!");
-                document.getElementById('sub-email').value = '';
+        // TESTI 1: Yritetään hakea pelkkää hero-tietoa
+        const db = supabase.createClient(SUPA_URL, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q");
+        
+        async function testi() {
+            console.log("Aloitetaan testi...");
+            try {
+                const { data, error } = await db.from('hero_content').select('*');
+                console.log("Testin tulos:", data, error);
+            } catch (e) {
+                console.error("Testi epäonnistui:", e);
             }
-        });
+        }
+        testi();
     </script>
 </body>
 </html>
