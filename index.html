@@ -58,7 +58,7 @@
     </div>
 
     <script>
-        const db = supabase.createClient("[SINUN_URL]", "[SINUN_ANON_KEY]");
+        const db = supabase.createClient("[SINUN_URL]", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q");
         
         async function fetchHero() {
             const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
@@ -94,7 +94,7 @@
             // 2. Kutsu Edge Functionia
             await fetch('[SINUN_URL]/functions/v1/send-sub-email', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer [SINUN_ANON_KEY]' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q' },
                 body: JSON.stringify({ email: email })
             });
             
