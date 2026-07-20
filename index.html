@@ -3,28 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOUBLE TROUBLE STUDIOS // Game Portfolio</title>
-    <link rel="stylesheet" href="style.css">
+    <title>DOUBLE TROUBLE STUDIOS</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="ubi-dark-mode">
-
-    <nav class="ubi-nav">
-        <a href="#" class="ubi-logo">DOUBLE<span>TROUBLE</span></a>
-    </nav>
-
-    <header id="hero-section" class="hero">
-        <h1 id="hero-title">LOADING...</h1>
-        <p id="hero-desc"></p>
-    </header>
-
-    <main>
-        <section id="subscribe" style="text-align: center; margin-top: 80px; padding: 40px;">
-            <h2>STAY UPDATED</h2>
-            <input type="email" id="sub-email" placeholder="ENTER YOUR EMAIL">
-            <button id="sub-btn" class="btn-ubi-primary">SUBSCRIBE</button>
-        </section>
-    </main>
+<body>
+    <h1 id="hero-title">LOADING...</h1>
+    <input type="email" id="sub-email" placeholder="EMAIL">
+    <button id="sub-btn">SUBSCRIBE</button>
 
     <script>
         const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
@@ -33,37 +18,21 @@
         const db = supabase.createClient(SUPA_URL, SUPA_KEY);
 
         async function loadContent() {
-            const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
+            const { data, error } = await db.from('hero_content').select('*').eq('id', 1).single();
             if (data) {
                 document.getElementById('hero-title').innerText = data.title;
-                document.getElementById('hero-desc').innerText = data.description;
             }
         }
 
-        // TÄMÄ ON KORJATTU VERSIO
-        document.getElementById('sub-btn').addEventListener('click', async (e) => {
-            e.preventDefault(); // Estää sivun latautumisen uudelleen
-            
+        document.getElementById('sub-btn').addEventListener('click', async () => {
             const email = document.getElementById('sub-email').value;
-            if (!email) {
-                alert("Syötä sähköpostiosoite!");
-                return;
-            }
-            
-            console.log("Lähetetään tallennuspyyntö...");
-            
-            const { data, error } = await db.from('subscribers').insert([{ email: email }]);
+            const { error } = await db.from('subscribers').insert([{ email: email }]);
             
             if (error) {
-                console.error("Virhe tallennuksessa:", error);
-                alert("Tapahtui virhe: " + error.message);
+                console.error("Virhe:", error);
             } else {
-                console.log("Tallennus onnistui!", data);
-                // Annetaan pieni viive ennen alertia, jos selain on jumissa
-                setTimeout(() => {
-                    alert("Kiitos tilauksesta!");
-                    document.getElementById('sub-email').value = '';
-                }, 100);
+                console.log("Onnistui!");
+                alert("Subscribed!");
             }
         });
 
