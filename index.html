@@ -32,35 +32,20 @@
             }
         }
 
-        // 2. Tilaus ja sähköpostin lähetys
+        // 2. Tallennetaan vain tietokantaan (Make.com hoitaa loput)
         document.getElementById('sub-btn').addEventListener('click', async () => {
             const email = document.getElementById('sub-email').value;
             if (!email) return alert("Syötä sähköposti!");
 
             console.log("Tallennetaan tietokantaan...");
-            const { error: dbError } = await db.from('subscribers').insert([{ email: email }]);
+            const { error } = await db.from('subscribers').insert([{ email: email }]);
             
-            if (dbError) {
-                console.error("DB Virhe:", dbError);
-                return alert("Tietokantavirhe: " + dbError.message);
-            }
-
-            console.log("Kutsutaan Edge Functionia...");
-            try {
-                const { data, error: funcError } = await db.functions.invoke('send-sub-email', {
-                    body: { email: email }
-                });
-
-                if (funcError) {
-                    console.error("Function virhe:", funcError);
-                    alert("Lähetysvirhe: " + funcError.message);
-                } else {
-                    console.log("Onnistui!", data);
-                    alert("Tilaus onnistui!");
-                }
-            } catch (e) {
-                console.error("Kutsuvirhe:", e);
-                alert("Kutsu epäonnistui: " + e.message);
+            if (error) {
+                console.error("Virhe:", error);
+                alert("Tilaus epäonnistui: " + error.message);
+            } else {
+                alert("Tilaus onnistui!");
+                document.getElementById('sub-email').value = ""; // Tyhjennetään kenttä
             }
         });
 
