@@ -58,7 +58,11 @@
     </div>
 
     <script>
-        const db = supabase.createClient("elifhcqurdemwsbgrxnu", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q");
+        // Korjattu URL-osoite
+        const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
+        const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q";
+        
+        const db = supabase.createClient(SUPA_URL, SUPA_KEY);
         
         async function fetchHero() {
             const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
@@ -88,13 +92,11 @@
             const email = document.getElementById('sub-email').value;
             if(!email || !email.includes('@')) { alert("Enter valid email"); return; }
             
-            // 1. Tallenna tietokantaan
             await db.from('subscribers').insert([{ email: email }]);
             
-            // 2. Kutsu Edge Functionia
-            await fetch('[SINUN_URL]/functions/v1/send-sub-email', {
+            await fetch(`${SUPA_URL}/functions/v1/send-sub-email`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPA_KEY}` },
                 body: JSON.stringify({ email: email })
             });
             
@@ -102,8 +104,8 @@
             document.getElementById('sub-email').value = '';
         });
 
-        // ... (login ja editor-logiikka pysyvät samana)
         document.addEventListener('keydown', (e) => { if (e.ctrlKey && e.shiftKey && e.key === 'E') document.getElementById('secret-editor').classList.toggle('active'); });
+        document.getElementById('close-editor').addEventListener('click', () => document.getElementById('secret-editor').classList.remove('active'));
         
         fetchHero();
         fetchGames();
