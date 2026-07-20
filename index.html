@@ -99,34 +99,21 @@
             const { error: dbError } = await db.from('subscribers').insert([{ email: email }]);
             if (dbError) {
                 console.error("DB virhe:", dbError);
-                alert("Virhe tallennuksessa: " + dbError.message);
                 return;
             }
             
             console.log("Kutsutaan Edge Functionia...");
             try {
+                // Lisätty tarkempi seuranta
                 const res = await fetch(`${SUPA_URL}/functions/v1/send-sub-email`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${SUPA_KEY}` 
-                    },
-                    body: JSON.stringify({ email: email })
+                    headers: { 'Content-Type': 'application/json' } // Poistettu auth-header testiksi
                 });
-                
-                const resultText = await res.text();
-                console.log("Function status:", res.status);
-                console.log("Function response:", resultText);
-                
-                if (res.ok) {
-                    alert("Subscribed!");
-                    document.getElementById('sub-email').value = '';
-                } else {
-                    alert("Sähköpostia ei voitu lähettää. Katso konsoli (F12).");
-                }
+                console.log("Fetch-kutsu suoritettu, status:", res.status);
+                alert("Subscribed! (Status: " + res.status + ")");
             } catch (err) {
-                console.error("Verkkovirhe tai muu ongelma:", err);
-                alert("Yhteysvirhe: " + err.message);
+                console.error("KRUUNU-VIRHE:", err);
+                alert("Virhe funktiokutsussa!");
             }
         });
 
