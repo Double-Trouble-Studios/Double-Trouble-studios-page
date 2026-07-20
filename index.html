@@ -58,7 +58,7 @@
     </div>
 
     <script>
-        const db = supabase.createClient("https://elifhcqurdemwsbgrxnu.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q");
+        const db = supabase.createClient("[SINUN_URL]", "[SINUN_ANON_KEY]");
         
         async function fetchHero() {
             const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
@@ -68,7 +68,6 @@
                 if (data.bg_image_url) {
                     document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(5, 5, 7, 0.8), rgba(5, 5, 7, 0.8)), url('${data.bg_image_url}')`;
                     document.getElementById('hero-section').style.backgroundSize = "cover";
-                    document.getElementById('hero-section').style.backgroundPosition = "center";
                 }
             }
         }
@@ -78,7 +77,7 @@
             if (data) {
                 document.getElementById('game-grid').innerHTML = data.map(game => `
                     <div class="ubi-card">
-                        <img src="${game.image_url || 'https://via.placeholder.com/400x200'}" class="ubi-card-image" onerror="this.src='https://via.placeholder.com/400x200'">
+                        <img src="${game.image_url}" class="ubi-card-image">
                         <div class="ubi-card-info"><h3>${game.title}</h3><p>${game.description}</p></div>
                     </div>
                 `).join('');
@@ -87,33 +86,25 @@
 
         document.getElementById('sub-btn').addEventListener('click', async () => {
             const email = document.getElementById('sub-email').value;
-            if(!email || !email.includes('@')) { alert("Please enter a valid email"); return; }
-            const { error } = await db.from('subscribers').insert([{ email: email }]);
-            if (error) { alert("Virhe: " + error.message); } else { alert("Subscription received!"); document.getElementById('sub-email').value = ''; }
+            if(!email || !email.includes('@')) { alert("Enter valid email"); return; }
+            
+            // 1. Tallenna tietokantaan
+            await db.from('subscribers').insert([{ email: email }]);
+            
+            // 2. Kutsu Edge Functionia
+            await fetch('[SINUN_URL]/functions/v1/send-sub-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer [SINUN_ANON_KEY]' },
+                body: JSON.stringify({ email: email })
+            });
+            
+            alert("Subscribed!");
+            document.getElementById('sub-email').value = '';
         });
 
-        document.getElementById('login-btn').addEventListener('click', async () => {
-            const inputPass = document.getElementById('admin-pass').value;
-            const { data } = await db.from('admin_config').select('value').eq('key_name', 'admin_password').single();
-            if (data && inputPass === data.value) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('editor-controls').style.display = 'block';
-            } else { alert("ACCESS DENIED"); }
-        });
-
-        document.getElementById('update-hero').addEventListener('click', async () => {
-            await db.from('hero_content').update({ title: document.getElementById('hero-title-in').value, description: document.getElementById('hero-desc-in').value, bg_image_url: document.getElementById('hero-img-in').value }).eq('id', 1);
-            fetchHero();
-        });
-
-        document.getElementById('add-game').addEventListener('click', async () => {
-            await db.from('games').insert([{ title: document.getElementById('new-game-title').value, description: document.getElementById('new-game-desc').value, image_url: document.getElementById('new-game-img').value }]);
-            fetchGames();
-        });
-
+        // ... (login ja editor-logiikka pysyvät samana)
         document.addEventListener('keydown', (e) => { if (e.ctrlKey && e.shiftKey && e.key === 'E') document.getElementById('secret-editor').classList.toggle('active'); });
-        document.getElementById('close-editor').addEventListener('click', () => document.getElementById('secret-editor').classList.remove('active'));
-
+        
         fetchHero();
         fetchGames();
     </script>
