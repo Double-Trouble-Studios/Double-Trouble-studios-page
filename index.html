@@ -3,26 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOUBLE TROUBLE STUDIOS</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body class="ubi-dark-mode">
-    <header id="hero-section" class="hero">
-        <h1 id="hero-title">LOADING...</h1>
-        <p id="hero-desc"></p>
-    </header>
-
-    <section id="subscribe">
-        <input type="email" id="sub-email" placeholder="EMAIL">
-        <button id="sub-btn">SUBSCRIBE</button>
-    </section>
-
-    <script><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOUBLE TROUBLE STUDIOS // Game Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -52,41 +32,6 @@
         
         const db = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-        // Ladataan sisältö
-        async function loadContent() {
-            const { data, error } = await db.from('hero_content').select('*').eq('id', 1).single();
-            if (data) {
-                document.getElementById('hero-title').innerText = data.title;
-                document.getElementById('hero-desc').innerText = data.description;
-            }
-        }
-
-        // Tilauksen käsittely
-        document.getElementById('sub-btn').addEventListener('click', async () => {
-            const email = document.getElementById('sub-email').value;
-            console.log("Yritetään tallentaa osoite:", email);
-            
-            const { data, error } = await db.from('subscribers').insert([{ email: email }]);
-            
-            if (error) {
-                console.error("TÄSSÄ ON VIRHE:", error);
-                alert("Virhe tietokantaan tallennuksessa: " + error.message);
-            } else {
-                console.log("Tallennus onnistui!", data);
-                alert("Subscribed!");
-                document.getElementById('sub-email').value = '';
-            }
-        });
-
-        loadContent();
-    </script>
-</body>
-</html>
-        const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
-        const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q";
-        const db = supabase.createClient(SUPA_URL, SUPA_KEY);
-
-        // A. Haetaan data (Tämä toimi testisivulla!)
         async function loadContent() {
             const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
             if (data) {
@@ -95,17 +40,30 @@
             }
         }
 
-        // B. Tilaus-toiminto
-        document.getElementById('sub-btn').addEventListener('click', async () => {
-            const email = document.getElementById('sub-email').value;
-            console.log("Yritetään tallentaa:", email);
+        // TÄMÄ ON KORJATTU VERSIO
+        document.getElementById('sub-btn').addEventListener('click', async (e) => {
+            e.preventDefault(); // Estää sivun latautumisen uudelleen
             
-            const { error } = await db.from('subscribers').insert([{ email: email }]);
+            const email = document.getElementById('sub-email').value;
+            if (!email) {
+                alert("Syötä sähköpostiosoite!");
+                return;
+            }
+            
+            console.log("Lähetetään tallennuspyyntö...");
+            
+            const { data, error } = await db.from('subscribers').insert([{ email: email }]);
+            
             if (error) {
-                console.error("Virhe:", error);
-                alert("Virhe: " + error.message);
+                console.error("Virhe tallennuksessa:", error);
+                alert("Tapahtui virhe: " + error.message);
             } else {
-                alert("Subscribed!");
+                console.log("Tallennus onnistui!", data);
+                // Annetaan pieni viive ennen alertia, jos selain on jumissa
+                setTimeout(() => {
+                    alert("Kiitos tilauksesta!");
+                    document.getElementById('sub-email').value = '';
+                }, 100);
             }
         });
 
