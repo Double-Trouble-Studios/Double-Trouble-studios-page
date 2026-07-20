@@ -2,41 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOUBLE TROUBLE STUDIOS</title>
+    <title>DEBUGGAUS</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <h1 id="hero-title">LOADING...</h1>
     <input type="email" id="sub-email" placeholder="EMAIL">
     <button id="sub-btn">SUBSCRIBE</button>
 
     <script>
         const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
         const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q";
-        
         const db = supabase.createClient(SUPA_URL, SUPA_KEY);
-
-        async function loadContent() {
-            const { data, error } = await db.from('hero_content').select('*').eq('id', 1).single();
-            if (data) {
-                document.getElementById('hero-title').innerText = data.title;
-            }
-        }
 
         document.getElementById('sub-btn').addEventListener('click', async () => {
             const email = document.getElementById('sub-email').value;
-            const { error } = await db.from('subscribers').insert([{ email: email }]);
             
-            if (error) {
-                console.error("Virhe:", error);
-            } else {
-                console.log("Onnistui!");
-                alert("Subscribed!");
+            console.log("Kutsutaan Edge Functionia...");
+            
+            try {
+                // Lisätään aikakatkaisu (timeout), ettei se jää "Pending"-tilaan
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+                const { data, error } = await db.functions.invoke('send-sub-email', {
+                    body: { email: email },
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                if (error) {
+                    console.error("FUNCTION VIRHE:", error);
+                    alert("Function-virhe: " + JSON.stringify(error));
+                } else {
+                    console.log("ONNISTUI!", data);
+                    alert("Sähköposti lähetetty!");
+                }
+            } catch (err) {
+                console.error("KUTSUN VIRHE:", err);
+                alert("Kutsu epäonnistui (ehkä timeout): " + err.message);
             }
         });
-
-        loadContent();
     </script>
 </body>
 </html>
