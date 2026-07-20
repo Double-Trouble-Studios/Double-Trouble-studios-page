@@ -43,18 +43,26 @@
         const db = supabase.createClient(SUPA_URL, SUPA_KEY);
 
         document.getElementById('sub-btn').addEventListener('click', async () => {
-            console.log("Nappia painettu!");
             const email = document.getElementById('sub-email').value;
-            
+            if(!email) return;
+
             console.log("Tallennetaan tietokantaan...");
             await db.from('subscribers').insert([{ email: email }]);
             
             console.log("Kutsutaan Edge Functionia...");
-            const res = await fetch(`${SUPA_URL}/functions/v1/send-sub-email`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+            // Käytetään Supabasen omaa invoke-metodia
+            const { data, error } = await db.functions.invoke('send-sub-email', {
+                body: { email: email },
             });
-            console.log("Kutsu tehty!");
+
+            if (error) {
+                console.error("Function virhe:", error);
+                alert("Virhe kutsussa: " + error.message);
+            } else {
+                console.log("Kutsu onnistui!", data);
+                alert("Subscribed!");
+                document.getElementById('sub-email').value = '';
+            }
         });
     </script>
 </body>
