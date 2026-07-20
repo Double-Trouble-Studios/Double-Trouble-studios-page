@@ -3,30 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TESTISIVU</title>
+    <title>DOUBLE TROUBLE STUDIOS</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
-    <h1>Testisivu</h1>
-    <p>Jos tämä näkyy, HTML toimii.</p>
-    
+<body class="ubi-dark-mode">
+    <header id="hero-section" class="hero">
+        <h1 id="hero-title">LOADING...</h1>
+        <p id="hero-desc"></p>
+    </header>
+
+    <section id="subscribe">
+        <input type="email" id="sub-email" placeholder="EMAIL">
+        <button id="sub-btn">SUBSCRIBE</button>
+    </section>
+
     <script>
-        // Käytetään vain perus-URL:ia, ei avainta vielä
         const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
-        
-        // TESTI 1: Yritetään hakea pelkkää hero-tietoa
-        const db = supabase.createClient(SUPA_URL, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q");
-        
-        async function testi() {
-            console.log("Aloitetaan testi...");
-            try {
-                const { data, error } = await db.from('hero_content').select('*');
-                console.log("Testin tulos:", data, error);
-            } catch (e) {
-                console.error("Testi epäonnistui:", e);
+        const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q";
+        const db = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+        // A. Haetaan data (Tämä toimi testisivulla!)
+        async function loadContent() {
+            const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
+            if (data) {
+                document.getElementById('hero-title').innerText = data.title;
+                document.getElementById('hero-desc').innerText = data.description;
             }
         }
-        testi();
+
+        // B. Tilaus-toiminto
+        document.getElementById('sub-btn').addEventListener('click', async () => {
+            const email = document.getElementById('sub-email').value;
+            console.log("Yritetään tallentaa:", email);
+            
+            const { error } = await db.from('subscribers').insert([{ email: email }]);
+            if (error) {
+                console.error("Virhe:", error);
+                alert("Virhe: " + error.message);
+            } else {
+                alert("Subscribed!");
+            }
+        });
+
+        loadContent();
     </script>
 </body>
 </html>
