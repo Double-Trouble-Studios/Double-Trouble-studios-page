@@ -58,7 +58,6 @@
     </div>
 
     <script>
-        // Korjattu URL-osoite
         const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
         const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q";
         
@@ -89,17 +88,29 @@
         }
 
         document.getElementById('sub-btn').addEventListener('click', async () => {
+            console.log("Nappia painettu!");
             const email = document.getElementById('sub-email').value;
-            if(!email || !email.includes('@')) { alert("Enter valid email"); return; }
+            if(!email || !email.includes('@')) { 
+                alert("Enter valid email"); 
+                return; 
+            }
             
-            await db.from('subscribers').insert([{ email: email }]);
+            console.log("Tallennetaan tietokantaan...");
+            const { error } = await db.from('subscribers').insert([{ email: email }]);
+            if (error) {
+                console.error("DB virhe:", error);
+                alert("Virhe tallennuksessa: " + error.message);
+                return;
+            }
             
-            await fetch(`${SUPA_URL}/functions/v1/send-sub-email`, {
+            console.log("Kutsutaan Edge Functionia...");
+            const res = await fetch(`${SUPA_URL}/functions/v1/send-sub-email`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPA_KEY}` },
                 body: JSON.stringify({ email: email })
             });
             
+            console.log("Function status:", res.status);
             alert("Subscribed!");
             document.getElementById('sub-email').value = '';
         });
