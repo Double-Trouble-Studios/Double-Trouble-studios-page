@@ -18,7 +18,70 @@
         <button id="sub-btn">SUBSCRIBE</button>
     </section>
 
+    <script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOUBLE TROUBLE STUDIOS // Game Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="ubi-dark-mode">
+
+    <nav class="ubi-nav">
+        <a href="#" class="ubi-logo">DOUBLE<span>TROUBLE</span></a>
+    </nav>
+
+    <header id="hero-section" class="hero">
+        <h1 id="hero-title">LOADING...</h1>
+        <p id="hero-desc"></p>
+    </header>
+
+    <main>
+        <section id="subscribe" style="text-align: center; margin-top: 80px; padding: 40px;">
+            <h2>STAY UPDATED</h2>
+            <input type="email" id="sub-email" placeholder="ENTER YOUR EMAIL">
+            <button id="sub-btn" class="btn-ubi-primary">SUBSCRIBE</button>
+        </section>
+    </main>
+
     <script>
+        const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
+        const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q";
+        
+        const db = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+        // Ladataan sisältö
+        async function loadContent() {
+            const { data, error } = await db.from('hero_content').select('*').eq('id', 1).single();
+            if (data) {
+                document.getElementById('hero-title').innerText = data.title;
+                document.getElementById('hero-desc').innerText = data.description;
+            }
+        }
+
+        // Tilauksen käsittely
+        document.getElementById('sub-btn').addEventListener('click', async () => {
+            const email = document.getElementById('sub-email').value;
+            console.log("Yritetään tallentaa osoite:", email);
+            
+            const { data, error } = await db.from('subscribers').insert([{ email: email }]);
+            
+            if (error) {
+                console.error("TÄSSÄ ON VIRHE:", error);
+                alert("Virhe tietokantaan tallennuksessa: " + error.message);
+            } else {
+                console.log("Tallennus onnistui!", data);
+                alert("Subscribed!");
+                document.getElementById('sub-email').value = '';
+            }
+        });
+
+        loadContent();
+    </script>
+</body>
+</html>
         const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
         const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q";
         const db = supabase.createClient(SUPA_URL, SUPA_KEY);
