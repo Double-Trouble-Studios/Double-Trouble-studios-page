@@ -1,41 +1,331 @@
 :root {
-    --dt-black: #050507;
-    --dt-dark-grey: #16161c;
-    --dt-medium-grey: #2c2c38;
-    --dt-light-grey: #888899;
-    --dt-white: #ffffff;
-    --dt-accent: #e63946;
+    --dt-black: #0a0a0f;
+    --dt-panel: #14141c;
+    --dt-line: #262631;
+    --dt-grey: #83839a;
+    --dt-white: #f2f2f6;
+    --dt-crimson: #ef3b52;
+    --dt-amber: #ffb100;
     --font-heading: 'Rajdhani', sans-serif;
     --font-body: 'Inter', sans-serif;
+    --font-mono: 'Space Mono', monospace;
 }
 
-body.ubi-dark-mode { background-color: var(--dt-black); color: var(--dt-white); font-family: var(--font-body); margin: 0; padding-top: 80px; }
+* { box-sizing: border-box; }
 
-.ubi-nav { position: fixed; top: 0; width: 100%; height: 80px; background: rgba(5, 5, 7, 0.95); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid var(--dt-medium-grey); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
-.ubi-logo { font-family: var(--font-heading); font-weight: 900; font-size: 1.5rem; text-decoration: none; color: white; }
-.ubi-logo span { color: var(--dt-accent); }
+body.ubi-dark-mode {
+    background-color: var(--dt-black);
+    color: var(--dt-white);
+    font-family: var(--font-body);
+    margin: 0;
+    padding-top: 72px;
+    position: relative;
+}
 
-.hero { text-align: center; padding: 100px 20px; background-color: var(--dt-dark-grey); color: white; border-bottom: 4px solid var(--dt-accent); }
-.hero h1 { font-family: var(--font-heading); font-size: 4rem; margin: 0; }
-.hero-cta { margin-top: 40px; }
-.hero-subtext { margin-top: 15px; color: var(--dt-light-grey); font-size: 0.9rem; letter-spacing: 1px; }
+/* signature: subtle CRT scanline overlay across the whole page */
+.scanlines {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.025) 0px,
+        rgba(255,255,255,0.025) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    mix-blend-mode: overlay;
+}
 
-.ubi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px; padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
-.ubi-card { background-color: var(--dt-dark-grey); border: 1px solid var(--dt-medium-grey); transition: 0.4s; }
-.ubi-card:hover { transform: translateY(-5px); border-color: var(--dt-accent); }
-.ubi-card-image { width: 100%; height: 200px; object-fit: cover; }
-.ubi-card-info { padding: 25px; }
+/* ---------- NAV ---------- */
+.ubi-nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 72px;
+    background: rgba(10, 10, 15, 0.92);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    border-bottom: 1px solid var(--dt-line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+}
+.ubi-logo {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    color: white;
+}
+.ubi-logo span { color: var(--dt-crimson); }
+.nav-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--dt-amber);
+    letter-spacing: 2px;
+    border: 1px solid var(--dt-line);
+    padding: 5px 10px;
+    border-radius: 3px;
+}
 
-.btn-ubi-primary { background-color: var(--dt-accent); color: white; padding: 15px 40px; border: none; cursor: pointer; text-transform: uppercase; font-family: var(--font-heading); font-weight: 700; border-radius: 8px; display: inline-block; text-decoration: none; transition: 0.3s; }
-.btn-ubi-primary:hover { opacity: 0.9; }
+/* ---------- HERO ---------- */
+.hero {
+    text-align: center;
+    padding: 120px 20px 100px;
+    background-color: var(--dt-panel);
+    color: white;
+    border-bottom: 1px solid var(--dt-line);
+    position: relative;
+    overflow: hidden;
+}
+.boot-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    color: var(--dt-amber);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+.boot-eyebrow .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dt-amber);
+    box-shadow: 0 0 8px var(--dt-amber);
+    animation: pulse 1.6s infinite ease-in-out;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+}
+.hero h1 {
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    font-weight: 900;
+    margin: 0;
+    letter-spacing: 1px;
+    min-height: 1.2em;
+}
+.cursor {
+    color: var(--dt-crimson);
+    animation: blink 0.9s steps(1) infinite;
+}
+@keyframes blink {
+    50% { opacity: 0; }
+}
+#hero-desc {
+    color: var(--dt-grey);
+    font-size: 1.15rem;
+    max-width: 600px;
+    margin: 20px auto 0;
+    font-family: var(--font-body);
+}
+.hero-cta { margin-top: 44px; }
+.hero-subtext {
+    margin-top: 16px;
+    color: var(--dt-grey);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+}
 
-.editor-panel { display: none; position: fixed; bottom: 20px; right: 20px; background: var(--dt-dark-grey); padding: 20px; border: 1px solid var(--dt-accent); z-index: 2000; max-height: 80vh; overflow-y: auto; }
+/* ---------- SECTION LABELS ---------- */
+.section-label {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    color: var(--dt-grey);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.section-label.center { justify-content: center; padding-top: 0; }
+.tag-index {
+    color: var(--dt-black);
+    background: var(--dt-amber);
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 2px;
+}
+
+/* ---------- GAME GRID / CARTRIDGE CARDS ---------- */
+.ubi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 32px;
+    padding: 30px 20px 70px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.ubi-card {
+    background-color: var(--dt-panel);
+    border: 1px solid var(--dt-line);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s ease;
+}
+.ubi-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--dt-crimson);
+    box-shadow: 0 12px 30px rgba(239, 59, 82, 0.15);
+}
+.cart-tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    color: var(--dt-black);
+    background: var(--dt-amber);
+    padding: 3px 8px;
+    border-radius: 2px;
+}
+.ubi-card-image { width: 100%; height: 200px; object-fit: cover; display: block; }
+.ubi-card-info { padding: 22px 25px 26px; }
+.ubi-card-info h3 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    margin: 0 0 8px;
+    letter-spacing: 0.5px;
+}
+.ubi-card-info p {
+    color: var(--dt-grey);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn-ubi-primary {
+    background-color: var(--dt-crimson);
+    color: white;
+    padding: 15px 40px;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    display: inline-block;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+.btn-ubi-primary:hover { background-color: #ff4f68; }
+
+/* ---------- SUBSCRIBE ---------- */
+.subscribe-panel {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px 20px 90px;
+    background: var(--dt-panel);
+    border-top: 1px solid var(--dt-line);
+}
+.subscribe-panel h2 {
+    font-family: var(--font-heading);
+    letter-spacing: 1px;
+    margin-top: 18px;
+}
+.subscribe-panel > p { color: var(--dt-grey); margin-bottom: 30px; }
+.sub-form {
+    display: inline-flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.sub-form input {
+    padding: 14px 16px;
+    width: 280px;
+    max-width: 80vw;
+    background: var(--dt-black);
+    border: 1px solid var(--dt-line);
+    color: white;
+    border-radius: 4px;
+    font-family: var(--font-body);
+}
+.sub-form input:focus {
+    outline: none;
+    border-color: var(--dt-crimson);
+}
+
+/* ---------- FOOTER ---------- */
+.ubi-footer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    color: var(--dt-grey);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+/* ---------- ADMIN PANEL ---------- */
+.editor-panel {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--dt-panel);
+    padding: 20px;
+    border: 1px solid var(--dt-crimson);
+    border-radius: 6px;
+    z-index: 2000;
+    max-height: 80vh;
+    overflow-y: auto;
+}
 .editor-panel.active { display: block; }
-.mobile-hint { display: none; text-align: center; color: var(--dt-light-grey); font-size: 0.9rem; margin-top: -30px; margin-bottom: 20px; }
+.editor-panel input {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: var(--dt-black);
+    border: 1px solid var(--dt-line);
+    color: white;
+    border-radius: 4px;
+}
+.mobile-hint {
+    display: none;
+    text-align: center;
+    color: var(--dt-grey);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    margin-top: -40px;
+    margin-bottom: 20px;
+}
 
+/* ---------- RESPONSIVE ---------- */
 @media screen and (max-width: 768px) {
-    .hero h1 { font-size: 2.5rem; }
-    .ubi-grid { display: flex; flex-wrap: nowrap; overflow-x: auto; padding: 20px; gap: 20px; scroll-snap-type: x mandatory; max-width: 100%; }
-    .ubi-card { min-width: 80%; scroll-snap-align: center; }
+    .hero { padding: 90px 20px 70px; }
+    .hero h1 { font-size: 2.4rem; }
+    .ubi-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 20px;
+        gap: 20px;
+        scroll-snap-type: x mandatory;
+        max-width: 100%;
+    }
+    .ubi-card { min-width: 82%; scroll-snap-align: center; }
     .mobile-hint { display: block; }
+    .sub-form { flex-direction: column; align-items: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cursor, .boot-eyebrow .dot { animation: none; }
 }
