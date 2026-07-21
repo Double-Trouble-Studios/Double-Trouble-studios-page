@@ -93,17 +93,8 @@
             if(!email || !email.includes('@')) { alert("Enter valid email"); return; }
             
             await db.from('subscribers').insert([{ email: email }]);
-
-            const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/wk4f3h9wg33uax1cj0kbe4jbidgswytg";
-            try {
-                await fetch(MAKE_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email })
-                });
-            } catch (err) {
-                console.error("Make.com webhook failed:", err);
-            }
+            // Sähköpostin lähetys hoituu nyt automaattisesti Supabasen
+            // tietokantatriggereiden kautta (subscribers -> email_queue -> make.com webhook)
 
             alert("Subscribed!");
             document.getElementById('sub-email').value = '';
