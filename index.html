@@ -4,52 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOUBLE TROUBLE STUDIOS // Game Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body style="background: #111; color: white; font-family: sans-serif; text-align: center; padding: 50px;">
+<body class="ubi-dark-mode">
 
-    <h1>DOUBLE TROUBLE STUDIOS</h1>
-    <h2 id="hero-title">LOADING...</h2>
-    <p id="hero-desc"></p>
+    <nav class="ubi-nav">
+        <a href="#" class="ubi-logo">DOUBLE<span>TROUBLE</span></a>
+    </nav>
 
-    <div style="margin-top: 40px;">
-        <input type="email" id="sub-email" placeholder="ENTER YOUR EMAIL" style="padding: 10px;">
-        <button id="sub-btn" style="padding: 10px;">SUBSCRIBE</button>
+    <header id="hero-section" class="hero">
+        <h1 id="hero-title">LOADING...</h1>
+        <p id="hero-desc" style="color: var(--dt-light-grey); font-size: 1.2rem; max-width: 600px; margin: 20px auto;"></p>
+        
+        <div class="hero-cta">
+            <a href="#subscribe" class="btn-ubi-primary">JOIN ALPHA</a>
+            <p class="hero-subtext">GET EXCLUSIVE UPDATES & ALPHA ACCESS</p>
+        </div>
+    </header>
+
+    <main>
+        <section id="game-grid" class="ubi-grid"></section>
+        <p class="mobile-hint">Slide right to see other games &rarr;</p>
+
+        <section id="subscribe" style="text-align: center; margin-top: 80px; padding: 40px; background: rgba(255,255,255,0.03); border-top: 1px solid var(--dt-medium-grey);">
+            <h2>STAY UPDATED</h2>
+            <p style="color: var(--dt-light-grey);">Subscribe for our upcoming game releases.</p>
+            <input type="email" id="sub-email" placeholder="ENTER YOUR EMAIL" style="padding: 12px; width: 250px; background: var(--dt-dark-grey); border: 1px solid var(--dt-medium-grey); color: white;">
+            <button id="sub-btn" class="btn-ubi-primary">SUBSCRIBE</button>
+        </section>
+    </main>
+
+    <div id="secret-editor" class="editor-panel">
+        <div class="editor-header"><h3>DT_CORE // ADMIN</h3><button id="close-editor">&times;</button></div>
+        <div id="login-screen">
+            <input type="password" id="admin-pass" placeholder="KEY">
+            <button id="login-btn" class="btn-ubi-primary">ACCESS</button>
+        </div>
+        <div id="editor-controls" style="display: none;">
+            <h4>UPDATE HERO</h4>
+            <input type="text" id="hero-title-in" placeholder="New Title">
+            <input type="text" id="hero-desc-in" placeholder="New Desc">
+            <input type="text" id="hero-img-in" placeholder="Image URL">
+            <button id="update-hero" class="btn-ubi-primary">SAVE HERO</button>
+            <hr>
+            <h4>ADD GAME</h4>
+            <input type="text" id="new-game-title" placeholder="Name">
+            <input type="text" id="new-game-desc" placeholder="Description">
+            <input type="text" id="new-game-img" placeholder="Image URL">
+            <button id="add-game" class="btn-ubi-primary">SAVE GAME</button>
+        </div>
     </div>
 
     <script>
+        // Korjattu URL-osoite
         const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
         const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q";
         
         const db = supabase.createClient(SUPA_URL, SUPA_KEY);
-
-        // 1. Haetaan sisältö
-        async function loadContent() {
+        
+        async function fetchHero() {
             const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
             if (data) {
                 document.getElementById('hero-title').innerText = data.title;
                 document.getElementById('hero-desc').innerText = data.description;
+                if (data.bg_image_url) {
+                    document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(5, 5, 7, 0.8), rgba(5, 5, 7, 0.8)), url('${data.bg_image_url}')`;
+                    document.getElementById('hero-section').style.backgroundSize = "cover";
+                }
             }
         }
 
-        // 2. Tallennetaan vain tietokantaan (Make.com hoitaa loput)
+        async function fetchGames() {
+            const { data } = await db.from('games').select('*');
+            if (data) {
+                document.getElementById('game-grid').innerHTML = data.map(game => `
+                    <div class="ubi-card">
+                        <img src="${game.image_url}" class="ubi-card-image">
+                        <div class="ubi-card-info"><h3>${game.title}</h3><p>${game.description}</p></div>
+                    </div>
+                `).join('');
+            }
+        }
+
         document.getElementById('sub-btn').addEventListener('click', async () => {
             const email = document.getElementById('sub-email').value;
-            if (!email) return alert("Syötä sähköposti!");
-
-            console.log("Tallennetaan tietokantaan...");
-            const { error } = await db.from('subscribers').insert([{ email: email }]);
+            if(!email || !email.includes('@')) { alert("Enter valid email"); return; }
             
-            if (error) {
-                console.error("Virhe:", error);
-                alert("Tilaus epäonnistui: " + error.message);
-            } else {
-                alert("Tilaus onnistui!");
-                document.getElementById('sub-email').value = ""; // Tyhjennetään kenttä
+            await db.from('subscribers').insert([{ email: email }]);
+
+            const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/wk4f3h9wg33uax1cj0kbe4jbidgswytg";
+            try {
+                await fetch(MAKE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+            } catch (err) {
+                console.error("Make.com webhook failed:", err);
             }
+
+            alert("Subscribed!");
+            document.getElementById('sub-email').value = '';
         });
 
-        loadContent();
+        document.addEventListener('keydown', (e) => { if (e.ctrlKey && e.shiftKey && e.key === 'E') document.getElementById('secret-editor').classList.toggle('active'); });
+        document.getElementById('close-editor').addEventListener('click', () => document.getElementById('secret-editor').classList.remove('active'));
+        
+        fetchHero();
+        fetchGames();
     </script>
 </body>
 </html>
