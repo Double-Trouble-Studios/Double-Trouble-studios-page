@@ -4,37 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOUBLE TROUBLE STUDIOS // Game Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;900&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="ubi-dark-mode">
 
+    <div class="scanlines" aria-hidden="true"></div>
+
     <nav class="ubi-nav">
         <a href="#" class="ubi-logo">DOUBLE<span>TROUBLE</span></a>
+        <span class="nav-tag">SYS.ONLINE</span>
     </nav>
 
     <header id="hero-section" class="hero">
-        <h1 id="hero-title">LOADING...</h1>
-        <p id="hero-desc" style="color: var(--dt-light-grey); font-size: 1.2rem; max-width: 600px; margin: 20px auto;"></p>
-        
+        <div class="boot-eyebrow"><span class="dot"></span>DT_CORE // BOOT SEQUENCE</div>
+        <h1 id="hero-title" class="typewriter">LOADING<span class="cursor">_</span></h1>
+        <p id="hero-desc"></p>
+
         <div class="hero-cta">
             <a href="#subscribe" class="btn-ubi-primary">JOIN ALPHA</a>
-            <p class="hero-subtext">GET EXCLUSIVE UPDATES & ALPHA ACCESS</p>
+            <p class="hero-subtext">GET EXCLUSIVE UPDATES &amp; ALPHA ACCESS</p>
         </div>
     </header>
 
     <main>
+        <div class="section-label"><span class="tag-index">01</span>CURRENT BUILDS</div>
         <section id="game-grid" class="ubi-grid"></section>
         <p class="mobile-hint">Slide right to see other games &rarr;</p>
 
-        <section id="subscribe" style="text-align: center; margin-top: 80px; padding: 40px; background: rgba(255,255,255,0.03); border-top: 1px solid var(--dt-medium-grey);">
+        <section id="subscribe" class="subscribe-panel">
+            <div class="section-label center"><span class="tag-index">02</span>ALPHA ACCESS</div>
             <h2>STAY UPDATED</h2>
-            <p style="color: var(--dt-light-grey);">Subscribe for our upcoming game releases.</p>
-            <input type="email" id="sub-email" placeholder="ENTER YOUR EMAIL" style="padding: 12px; width: 250px; background: var(--dt-dark-grey); border: 1px solid var(--dt-medium-grey); color: white;">
-            <button id="sub-btn" class="btn-ubi-primary">SUBSCRIBE</button>
+            <p>Subscribe for our upcoming game releases.</p>
+            <div class="sub-form">
+                <input type="email" id="sub-email" placeholder="ENTER YOUR EMAIL">
+                <button id="sub-btn" class="btn-ubi-primary">SUBSCRIBE</button>
+            </div>
         </section>
     </main>
+
+    <footer class="ubi-footer">
+        <span>&copy; DOUBLE TROUBLE STUDIOS</span>
+        <span class="footer-tag">BUILD 0.9.2</span>
+    </footer>
 
     <div id="secret-editor" class="editor-panel">
         <div class="editor-header"><h3>DT_CORE // ADMIN</h3><button id="close-editor">&times;</button></div>
@@ -61,16 +74,35 @@
         // Korjattu URL-osoite
         const SUPA_URL = "https://elifhcqurdemwsbgrxnu.supabase.co";
         const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsaWZoY3F1cmRlbXdzYmdyeG51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTQ2NTUsImV4cCI6MjA5OTgzMDY1NX0.cKszlA20kGNJRiy8K5GNdgpsqCeYl98qwNS-AvHac_Q";
-        
+
         const db = supabase.createClient(SUPA_URL, SUPA_KEY);
-        
+
+        function typeText(el, text, speed = 35) {
+            let i = 0;
+            el.textContent = '';
+            const interval = setInterval(() => {
+                el.textContent = text.slice(0, i + 1);
+                i++;
+                if (i >= text.length) {
+                    clearInterval(interval);
+                    const c = document.createElement('span');
+                    c.className = 'cursor';
+                    c.textContent = '_';
+                    el.appendChild(c);
+                }
+            }, speed);
+        }
+
         async function fetchHero() {
             const { data } = await db.from('hero_content').select('*').eq('id', 1).single();
+            const titleEl = document.getElementById('hero-title');
+            const title = (data && data.title) ? data.title : 'DOUBLE TROUBLE STUDIOS';
+            typeText(titleEl, title);
+
             if (data) {
-                document.getElementById('hero-title').innerText = data.title;
-                document.getElementById('hero-desc').innerText = data.description;
+                document.getElementById('hero-desc').innerText = data.description || '';
                 if (data.bg_image_url) {
-                    document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(5, 5, 7, 0.8), rgba(5, 5, 7, 0.8)), url('${data.bg_image_url}')`;
+                    document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(6, 6, 10, 0.88), rgba(6, 6, 10, 0.88)), url('${data.bg_image_url}')`;
                     document.getElementById('hero-section').style.backgroundSize = "cover";
                 }
             }
@@ -79,8 +111,9 @@
         async function fetchGames() {
             const { data } = await db.from('games').select('*');
             if (data) {
-                document.getElementById('game-grid').innerHTML = data.map(game => `
+                document.getElementById('game-grid').innerHTML = data.map((game, i) => `
                     <div class="ubi-card">
+                        <span class="cart-tag">REV.0${i + 1}</span>
                         <img src="${game.image_url}" class="ubi-card-image">
                         <div class="ubi-card-info"><h3>${game.title}</h3><p>${game.description}</p></div>
                     </div>
@@ -91,7 +124,7 @@
         document.getElementById('sub-btn').addEventListener('click', async () => {
             const email = document.getElementById('sub-email').value;
             if(!email || !email.includes('@')) { alert("Enter valid email"); return; }
-            
+
             await db.from('subscribers').insert([{ email: email }]);
             // Sähköpostin lähetys hoituu nyt automaattisesti Supabasen
             // tietokantatriggereiden kautta (subscribers -> email_queue -> make.com webhook)
@@ -102,7 +135,7 @@
 
         document.addEventListener('keydown', (e) => { if (e.ctrlKey && e.shiftKey && e.key === 'E') document.getElementById('secret-editor').classList.toggle('active'); });
         document.getElementById('close-editor').addEventListener('click', () => document.getElementById('secret-editor').classList.remove('active'));
-        
+
         fetchHero();
         fetchGames();
     </script>
